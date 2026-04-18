@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Love ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Dancing Script', cursive;
+            background-color: #FFF0F5;
+        }
+
+        /* --- TRANG KHÓA --- */
+        #lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1518199268815-95a206411533?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: all 0.8s ease;
+        }
+
+        /* Lớp phủ làm tối hình nền để chữ rõ hơn */
+        #lock-screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: -1;
+        }
+
+        .lock-box {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            color: #fff;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .lock-box h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .input-group input {
+            padding: 12px;
+            font-size: 1.2rem;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            outline: none;
+            text-align: center;
+            width: 100%;
+            margin-top: 15px;
+            color: #ff1493;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .input-group button {
+            margin-top: 20px;
+            padding: 12px 40px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+            cursor: pointer;
+            font-family: 'Dancing Script', cursive;
+            transition: transform 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
+        }
+
+        .input-group button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Khi mở khoá thành công */
+        .hidden-lock {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transform: scale(1.2);
+        }
+
+        /* --- TRANG CHÍNH --- */
+        #main-screen {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #FFF0F5; /* Hồng kem */
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        .show-main {
+            opacity: 1 !important;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .text-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5vw;
+            color: #ff1493;
+            text-shadow: 0 0 10px #fff, 0 0 20px #ffb6c1;
+            opacity: 0;
+            transition: opacity 2s ease;
+            pointer-events: none;
+            z-index: 10;
+            text-align: center;
+        }
+
+        @keyframes pulse {
+            from { transform: translate(-50%, -50%) scale(1); }
+            to { transform: translate(-50%, -50%) scale(1.08); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="lock-screen">
+        <div class="lock-box">
+            <h1>Cánh cửa Tình yêu</h1>
+            <p style="font-family: sans-serif;">Nhập mã số để vào trái tim anh</p>
+            <div class="input-group">
+                <input type="password" id="passInput" placeholder="Mật mã là gì nhỉ?..." autofocus>
+                <br>
+                <button onclick="checkPassword()">Mở Cửa ❤️</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-screen">
+        <canvas id="heartCanvas"></canvas>
+        <div class="text-container" id="loveText">I LOVE SIN😘😘</div>
+    </div>
+
+    <script>
+        // KIỂM TRA MẬT KHẨU
+        function checkPassword() {
+            const pass = document.getElementById('passInput').value;
+            if (pass === '130110') {
+                // 1. Ẩn trang khóa
+                document.getElementById('lock-screen').classList.add('hidden-lock');
+                
+                // 2. Hiện trang chính
+                const main = document.getElementById('main-screen');
+                main.classList.add('show-main');
+                
+                // 3. Chạy hiệu ứng
+                startMagic();
+            } else {
+                alert('Mã số không đúng rồi! Thử lại đi Sin ơi 💕');
+                document.getElementById('passInput').value = "";
+            }
+        }
+
+        // Hỗ trợ Enter
+        document.getElementById('passInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        // HỆ THỐNG TRÁI TIM
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, particles = [];
+        let isFormingHeart = false;
+
+        function getHeartPoint(t, scale) {
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+            return { x: x * scale, y: y * scale };
+        }
+
+        function drawSmallHeart(ctx, x, y, size, color) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(size / 20, size / 20);
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(0, 5);
+            ctx.bezierCurveTo(0, 0, -5, 0, -5, 5);
+            ctx.bezierCurveTo(-5, 10, 0, 15, 0, 18);
+            ctx.bezierCurveTo(0, 15, 5, 10, 5, 5);
+            ctx.bezierCurveTo(5, 0, 0, 0, 0, 5);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        class Particle {
+            constructor(i, total) {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.size = Math.random() * 8 + 12;
+                this.color = `hsl(${Math.random() * 20 + 340}, 100%, 70%)`;
+
+                const t = (i / total) * Math.PI * 2;
+                const scale = Math.min(w, h) / 40; 
+                const targetPoint = getHeartPoint(t, scale);
+                this.targetX = w / 2 + targetPoint.x;
+                this.targetY = h / 2 + targetPoint.y - 20;
+            }
+
+            update() {
+                if (isFormingHeart) {
+                    this.x += (this.targetX - this.x) * 0.04;
+                    this.y += (this.targetY - this.y) * 0.04;
+                } else {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.x < 0 || this.x > w) this.vx *= -1;
+                    if (this.y < 0 || this.y > h) this.vy *= -1;
+                }
+            }
+
+            draw() {
+                drawSmallHeart(ctx, this.x, this.y, this.size, this.color);
+            }
+        }
+
+        function startMagic() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < 300; i++) particles.push(new Particle(i, 300));
+            
+            animate();
+
+            // 1 giây sau hiện chữ
+            setTimeout(() => {
+                const txt = document.getElementById('loveText');
+                txt.style.opacity = '1';
+                txt.style.animation = 'pulse 1.5s infinite alternate';
+            }, 1000);
+
+            // 3 giây sau tụ lại thành hình trái tim
+            setTimeout(() => {
+                isFormingHeart = true;
+            }, 3000);
+        }
+
+        function animate() {
+            ctx.fillStyle = '#FFF0F5';
+            ctx.fillRect(0, 0, w, h);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
